@@ -40,12 +40,39 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSending(true);
-    // Simulate sending
-    await new Promise((r) => setTimeout(r, 1500));
-    setSending(false);
-    setSent(true);
-    setForm({ name: "", email: "", subject: "", message: "" });
-    setTimeout(() => setSent(false), 4000);
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "YOUR_ACCESS_KEY_HERE",
+          name: form.name,
+          email: form.email,
+          subject: form.subject || "New Contact from Portfolio",
+          message: form.message,
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setSent(true);
+        setForm({ name: "", email: "", subject: "", message: "" });
+        setTimeout(() => setSent(false), 4000);
+      } else {
+        console.error("Form error:", result);
+        alert("Failed to send message. Please make sure you have added your Web3Forms Access Key.");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Something went wrong. Please check your internet connection.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -62,26 +89,6 @@ const Contact = () => {
           <div className="grid lg:grid-cols-5 gap-8">
             {/* Contact methods — sidebar */}
             <div className="lg:col-span-2 flex flex-col gap-4">
-              {/* Stationery header */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="paper-card p-6 mb-2"
-                style={{ borderLeft: "3px solid #C66A4E" }}
-              >
-                <p className="font-mono text-[10px] tracking-widest uppercase text-terra mb-2">
-                  Office Hours
-                </p>
-                <p className="font-editorial font-semibold text-charcoal text-sm mb-1">
-                  Mon – Fri, 9AM – 6PM IST
-                </p>
-                <div className="flex items-center gap-1.5 text-xs text-muted font-body mt-3">
-                  <FiMapPin size={11} className="text-terra" />
-                  India (UTC +5:30)
-                </div>
-              </motion.div>
 
               {contactMethods.map((method, i) => (
                 <motion.a

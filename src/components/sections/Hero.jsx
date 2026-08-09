@@ -45,7 +45,7 @@ const Hero = () => {
 
       {/* Decorative grid */}
       <div
-        className="absolute inset-0 opacity-[0.025]"
+        className="absolute inset-0 opacity-[0.025] pointer-events-none"
         style={{
           backgroundImage:
             "linear-gradient(#2E2E2E 1px, transparent 1px), linear-gradient(90deg, #2E2E2E 1px, transparent 1px)",
@@ -53,7 +53,7 @@ const Hero = () => {
         }}
       />
 
-      <div className="section-container w-full pt-24 pb-16">
+      <div className="section-container relative z-10 w-full pt-24 pb-16">
         <div className="max-w-4xl">
           {/* Eyebrow */}
           <motion.div
